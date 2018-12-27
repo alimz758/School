@@ -1,0 +1,25 @@
+#include  <iostream>
+
+using namespace std;
+
+int main() 
+{
+	//hot dog machine makes 3 hot dog per minute.
+	const int hotDog= 3;
+	const int time= 60;
+	int numHotDog = hotDog * time;
+	
+	// number of packages.
+	int package;
+	package= numHotDog/8;
+	
+	// number of leftovers.
+	int leftOvers;
+	leftOvers = numHotDog % package;
+	
+	cout <<"Number of hot dogs made in 60 minutes are " << numHotDog << ".\n";
+	cout << "Number of Packages we can make are " << package << ".\n";
+	cout << "Number of Left Overs are " << leftOvers << ".\n";
+	
+	return 0;
+}
