@@ -1,0 +1,33 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+int main()
+{
+	float l, rate, rate1, payment ,paidBack, intrestPaid;
+	int n;
+	cout << "The Loan amount is:";
+	cin >> l ;
+	cin.ignore();
+	cout << "The Monthly Intrest Rate is: ";
+	cin >> rate;
+	cin.ignore();
+	cout << "The number of payments are:";
+	cin >> n;
+	rate1= rate/100;
+	payment = ( rate1 * pow ( ( 1.0 + rate1), n) * l)/ (pow ( ( 1.0 + rate1), n)- 1.0);
+	paidBack = n * payment;
+	intrestPaid = paidBack - l;
+	cout << setprecision(2) << fixed;
+	cout << left <<setw(20) <<"Loan Amount: " << setw(2) << "$"<< right <<setw(20) << l << "\n";
+	cout <<left<< setw(20) <<"Monthly Intrest Rate: " <<setw(2) << right <<setw(20) << rate << "%\n";
+	cout <<left <<setw(20)  <<"Number of Payments: "  <<  right << setw(22) << n << "\n";
+	cout << left<<setw(20) <<"Monthly Payment: " <<setw(2) << "$" <<  right <<setw(20)<< payment << "\n";
+	cout <<  left<<setw(20)<<"Amount Paid Back: " << setw(2) << "$" << right <<setw(20) << paidBack << "\n";
+	cout << left << setw(20) <<"Intrest Paid: " <<setw(2) << "$"  << right << setw(20) << intrestPaid << "\n";
+	return 0;
+
+	
+}
