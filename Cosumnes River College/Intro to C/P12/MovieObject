@@ -1,0 +1,204 @@
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+class MovieObject {
+	public:
+		string name;
+		int length;
+		string genre;
+		double price;	
+};
+
+class MovieRentalDatabase{
+	
+	int parameter;
+	MovieObject *movie;
+
+	public:
+	
+		MovieRentalDatabase(int num) 
+		{
+			parameter=num;
+			movie =new MovieObject[parameter];
+		}
+		
+		void menu1() 
+		{
+			for (int count=0; count < parameter; count++)
+			{
+				cout << "------------------------------------" << endl;
+				cout << "Please enter data for movie #" << count+1 << endl;
+			
+				cout << "Name: " ;
+				getline(cin, movie[count].name);
+				
+				cout <<"Length (in minutes): " ;
+				cin >>movie[count].length;
+				cin.ignore();
+			
+				cout<< "Genre: " ;
+				getline(cin,movie[count].genre);
+		
+				cout << "Price (in dollars and cents): " ;
+				cin >> movie[count].price ;
+				cin.ignore();
+				
+			}
+			cout << endl;
+		}
+		
+		void menu2()
+		{
+			cout << fixed << setprecision(2); 
+			for (int count=0;count<parameter; count++)
+			{
+				cout << "Movie #" << count+1<< endl;
+				cout << "Name: " << movie[count].name << endl;
+				cout << "Length: " << movie[count].length << " minutes." <<endl;
+				cout << "Genre: " << movie[count].genre << endl;
+				cout << "Price: " << movie[count].price<< " $."<<endl;
+				cout << "---------"<< endl;
+			}
+		}
+		
+		void menu3() 
+		{
+			int num;
+			cout << "Enter an element number to replace." << endl;
+			cin.ignore();
+			cin >> num;
+			if (num>0 && num <=parameter)
+			{
+			
+				cout << "PLease enter data for movie #" << num<< endl;
+				cin.ignore();
+		
+				cout << "Name: " ;
+				getline(cin, movie[num-1].name );
+		
+				cout << "Length (in minutes) ";
+				cin>> movie[num-1].length;
+				cin.ignore();
+		
+				cout << "Genre: ";
+				getline(cin, movie[num-1].genre);
+	
+				cout << "Price (in dollars and cents format): " ;
+				cin >> movie[num-1].price ;
+				cin.ignore();
+			}
+			else
+			{
+				cout << "Such an elemnet does not exist!" << endl;
+			}
+		}
+		
+		void menu4()
+		{
+			MovieObject temp;
+			for(int sub1=0; sub1<parameter-1;sub1++)
+			{
+				for(int sub2=sub1+1; sub2<parameter ;sub2++)
+				{
+					if( movie[sub1].name > movie[sub2].name)
+					{
+						temp=movie[sub1];
+						movie[sub1]=movie[sub2];
+						movie[sub2]=temp;
+					}
+				}
+			}
+		cout <<"Ascending sort has been completed." << endl;
+		}
+		
+		void menu5 () 
+		{
+			MovieObject temp;
+			for(int sub1=0; sub1<parameter-1;sub1++)
+			{
+				for(int sub2=sub1+1; sub2<parameter ;sub2++)
+				{
+					if( movie[sub1].name < movie[sub2].name)
+					{
+						temp=movie[sub1];
+						movie[sub1]=movie[sub2];
+						movie[sub2]=temp;
+					}
+				}
+			}
+			cout <<"Descending sort has been completed." << endl;
+		}		
+};
+
+
+int main()
+{
+	int choice, num_movie=0;
+	MovieRentalDatabase *dataBase;
+	cout << "Welcome to the movies!" << endl;
+	
+	do
+	{
+		cout << "Please selecet one from the menu:"<< endl;
+		cout << "1) Enter all movie data into the array."<< endl;
+		cout << "2) Display all movie data currently stored in the array."<< endl;
+		cout << "3) Change the contents of any one array element."<< endl;
+		cout << "4) Sort the array by movie name in ascending order."<<endl;
+		cout << "5) Sort the array by movie name in descending order."<< endl;
+		cout << "6) Quit the program."<< endl;
+		
+		cin>> choice;
+				
+		switch(choice)
+		{
+			
+			case 1:
+				cout << endl<< endl; 
+				cout << "Selection 1:" << endl;
+				cout<<"How many movies you want to enter: ";
+				cin >> num_movie;
+				cin.ignore();
+				dataBase = new  MovieRentalDatabase(num_movie);
+				dataBase->menu1();
+				break;
+				
+			case 2:
+				cout << endl<< endl;
+				cout << "Selection 2:"<< endl; 
+				dataBase->menu2();
+				break;
+				
+			case 3:
+				cout << endl<< endl;
+				cout << "Selection 3:"<< endl;
+				dataBase->menu3();
+				break;
+				
+			case 4:
+				cout << endl<< endl;
+				cout << "Selection 4:"<< endl;
+				dataBase->menu4();
+				break;
+				
+			case 5:
+				cout << endl<< endl;
+				cout << "Selection 5:" << endl;
+				dataBase->menu5();
+				break;
+				
+			case 6:
+				cout << "!EXITING!" ; 
+				exit(0);
+			
+			default	:
+				cout << "You have entered a wrong number for the menu. ";
+				cout << "Please selcet a number between 1-6." << endl;
+				break;
+		}
+		
+	}while(choice!=6); 
+	
+	return 0;
+} 
