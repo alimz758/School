@@ -1,0 +1,66 @@
+Ali Mirabzadeh
+ID:305179067
+Lab 2
+
+
+1.  export LC_ALL='C'
+To make sure that we are in standard C locale.
+
+2. sort -u /usr/share/dict/words > words
+It sorts all the words in that directory and and put the result in words
+
+3. wget https://web.cs.ucla.edu/classes/winter19/cs35L/assign/assign2.html
+It gets the html page
+
+   a. tr -c 'A-Za-z' '[\n*]'
+      It takes character with ‘A-Za-z' and change them to a new line
+   b. tr -cs 'A-Za-z' '[\n*]'
+      The list of words are the same except that this time there would one occurrence of the new line for each character 'A-Za-z'
+   c. tr -cs 'A-Za-z' '[\n*]' | sort
+      This would give the same as the previous one except that it has been sorted alphabetically.
+   d. tr -cs 'A-Za-z' '[\n*]' | sort -u
+      tag -u removes y repeats from the previous list
+   e. tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - words
+      This command reads the file and compare it with the file words
+   f. tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -23 - words
+      It finds the words not in the words file. -23 shows and it would not display the last two column.
+
+
+		     	      START Buildwords.sh
+					——————————————————-
+
+4.wget http://mauimapp.com/moolelo/hwnwdseng.htm
+Get the Hawaiian page 
+
+5. Create the Buildwords script in the directory that I created on lnxsrv09: /Lab2/buildwords.sh
+   touch buildwords.sh
+6. Start the shell scripting  
+   with #!/bin/bash/ 
+7. Delete the beginning 
+   sed '/<!DOCTYPE/ , /Adopt<\/td>/d’
+8. Delete the end
+   sed '/<\/tbody>/ , /<\/html>/d'
+9. Delete English words
+   sed ‘/<\/tr>/ , /<\/td>/d’
+10. Delete all HTML tags 
+    sed “s/<[^>]*>//g”
+11. Replace ` with ‘
+    “s/\`/\’/g”
+12. Convert all uppercase to lower
+    tr [:upper:] [:lower:]
+13. Replace space or , with a new line to separate words
+    sed “s/[ ,]/\n/g”
+14. Delete all blanks
+    tr -d [:blank:]
+15. Delete all lines that contain non-Hawaiian
+    sed “/[pk\^mnwlhaeiou]/d”
+16. sort the dictionary and leave the unique entries
+    sort -u
+17. Run the script and copy the result in hwords file
+    chmod +x buildwords
+    cat hwnwdseng.htm | ./buldwords.sh > hwords
+    
+
+
+
+
