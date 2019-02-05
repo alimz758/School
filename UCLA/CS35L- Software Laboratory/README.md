@@ -9,7 +9,7 @@ Lab #:
 
 	     1. Getting to know your system
       
-           2. Shell scripting
+         2. Shell scripting
        
 	     3. Modifying and rewriting software
        
