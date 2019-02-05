@@ -3,6 +3,7 @@ This class was inteded to work with tools and software for upper-div classes at 
 A few topics to mention thar were lectured in this lab were: C and Python Scripting, Linux, Git, Emacs, Debugging with Terminal, etc.
 
 Here is the name of each assignment for each week in the order.
+
 Lab #:
 
 
