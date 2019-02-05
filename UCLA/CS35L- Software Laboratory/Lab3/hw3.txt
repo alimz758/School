@@ -1,0 +1,18 @@
+Q1. The patch essentially removes the line because 
+there was the exact same expression right next to 
+it. It made it cleaner. It also helps to avoid redundancy. 
+
+Q2. There could be an issue for users that English is not first language and they do not use English. Also, date format is not the same in every country.
+
+Q3. We will get an index error since there is no line in the file to read it from. For example index[0] wants to get the first line and there is not first line to get, so it gives an error.
+
+Q4. It gives the following error:
+	File "shuf.py", line 65
+   	 except IOError as (errno, strerror):
+			^
+	SyntaxError: invalid syntax
+
+I searched on Google the reason for this error is that it should be changed to 
+"except IOError as err;" 
+Python 3 no longer allows what is
+known as "iteration over exceptions" unlike python 2 which I tested for the first time and did not give such an error.

@@ -1,0 +1,82 @@
+Ali Mirabzadeh
+lab3.txt
+
+1. Get Coreutils 8.29 source code compressed tarball, signature and keyring
+	
+	wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz
+	wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz.sig
+	wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+
+2. Verified its signature with the GNU Keyring
+	gpg --verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
+3. Get the following errors:
+	gpg: Signature made Wed 27 Dec 2017 10:29:05 AM PST using RSA key ID 306037D9
+	gpg: /u/cs/ugrad/mirabzad/.gnupg/trustdb.gpg: trustdb created
+	gpg: Good signature from "Pádraig Brady <P@draigBrady.com>"
+	gpg:                 aka "Pádraig Brady <pbrady@redhat.com>"
+	gpg:                 aka "Pádraig Brady <pixelbeat@gnu.org>"
+	gpg: WARNING: This key is not certified with a trusted signature!
+	gpg:          There is no indication that the signature belongs to the owner.
+4. Unzip the tar file
+	tar -xf coreutils-8.29.tar.xz
+5. Then go to the coreutils-8.29 directory 
+	cd coreutils-8.29
+6. Then run ./configure with --prefix=/u/cs/ugrad/mirabzad/temp to my desired path
+	./configure --prefix=/u/cs/ugrad/mirabzad/temp
+7. Compile the source code into binary
+	make
+8. Move the binary to desired place under coreutils file
+	make install
+9. Reproduce the bug
+	cd ~/temp
+10. Run ls -aA
+	As expected, got the bug 
+	. .. 
+11. Copy paste message #10 in a file called patch.diff
+	emacs patch.diff
+12. Then apply patchin with a flag p1
+	patch -p1 < patch.diff
+13. Re-compile it by make: Now, we want to build the patched file. we simply run the make command at the
+	highest level of the coreutils-8.29 directory
+14. Re-install
+	make install
+
+ 
+The following is the output we get from running make after applying the
+patch. Essentially we notice that there are much fewer files being
+compiled again as compared to the original make command. We see fewer
+leaving/entering commands.
+
+make  all-recursive
+make[1]: Entering directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29'
+Making all in po
+make[2]: Entering directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29/po'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29/po'
+Making all in .
+make[2]: Entering directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29'
+  CC       src/ls.o
+  CCLD     src/dir
+  CCLD     src/ls
+  CCLD     src/vdir
+  GEN      man/dir.1
+  GEN      man/ls.1
+  GEN      man/vdir.1
+make[2]: Leaving directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29'
+Making all in gnulib-tests
+make[2]: Entering directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29/gnulib-tests'
+make  all-recursive
+make[3]: Entering directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29/gnulib-tests'
+Making all in .
+make[4]: Entering directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29/gnulib-tests'
+make[4]: Nothing to be done for `all-am'.
+make[4]: Leaving directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29/gnulib-tests'
+make[3]: Leaving directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29/gnulib-tests'
+make[2]: Leaving directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29/gnulib-tests'
+make[1]: Leaving directory `/w/home.06/cs/ugrad/mirabzad/coreutils-8.29'
+
+Essentially after applying the patch, it recompiled only the
+selected files that had been modified from the original. Note that we only make
+the patch and not install it because this way we have the broken version of ls
+in the coreutils-8.29/temp folder and the fixed version in the coreutils-8.29/src
+folder.
