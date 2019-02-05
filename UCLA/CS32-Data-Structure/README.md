@@ -1,4 +1,4 @@
-These are all Data-Structure assignment; total of nine homework and projects. All written in C++.
+These are all Data-Structure assignments; total of nine homework and projects. All written in C++.
 
 They all get complied in Clang and g++.
 
