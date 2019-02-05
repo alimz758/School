@@ -1,0 +1,34 @@
+Ali Mirabzadeh
+305179067
+Hw.txt
+
+2.
+(3 ,5)
+(3 , 6)
+(3 ,4)
+(2 , 4)
+(1 ,4)
+(1 ,3)
+(1 ,2)
+(1 ,1)
+(2 ,1)
+(3 ,3)
+(4 ,5)
+(5 ,5)
+
+4.
+(3, 5)
+(4, 5)
+(3, 4)
+(3, 6)
+(5, 5)
+(3, 3)
+(2, 4)
+(6, 5)
+(5, 4)
+(1, 4)
+(7, 5)
+(5, 3)
+
+The Result of the two are different because of the nature of how they work. Stack is Last-in-first-out,LIFO; however, Queue is first-in-first-out,FIFO. Hence what they pop() is different from one another.
+Note that both pop the start point in the beginning to make sure it is not the same as the end point.
