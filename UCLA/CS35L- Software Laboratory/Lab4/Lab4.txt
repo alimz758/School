@@ -1,0 +1,149 @@
+
+Ali Mirabzadeh
+305179067
+lab4.txt
+
+
+1.First the old version of coretils that has bugs; run the following command
+	wget http://web.cs.ucla.edu/classes/winter19/cs35L/assign/coreutils-with-bug.tar.gz
+
+2. Then unzip the file by the following command
+	tar -zxvf coreutils-with-bug-tar.gz
+
+3. Then go tp the coreutils-with-bug directory with following command
+	cd coreutils-with-bug
+4. list the files in the directory to see what is inside
+	ls 
+5. configure the directory then make
+	./configure --prefix=/u/cs/ugrad/mirabzad/lab4/coreutils-with-bugmae
+	make
+However, after running "make"; we get the following errors:
+make  all-recursive
+make[1]: Entering directory `/w/home.06/cs/ugrad/mirabzad/lab4/coreutils-with-bug'
+Making all in lib
+make[2]: Entering directory `/w/home.06/cs/ugrad/mirabzad/lab4/coreutils-with-bug/lib'
+make  all-am
+make[3]: Entering directory `/w/home.06/cs/ugrad/mirabzad/lab4/coreutils-with-bug/lib'
+if gcc -DHAVE_CONFIG_H -DLIBDIR=\"/u/cs/ugrad/mirabzad/lab4/coreutils-with-bug/lib\" -I. -I. -I..  -I.. -I.   -g -O2 -MT utimecmp.o -MD -MP -MF ".deps/utimecmp.Tpo" -c -o utimecmp.o utimecmp.c; \
+then mv -f ".deps/utimecmp.Tpo" ".deps/utimecmp.Po"; else rm -f ".deps/utimecmp.Tpo"; exit 1; fi
+In file included from utimecmp.c:41:0:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens (int, char const *, struct timespec const [2]);
+     ^
+In file included from utimecmp.h:25:0,
+                 from utimecmp.c:25:
+/usr/include/sys/stat.h:373:12: note: previous declaration of 'futimens' was here
+ extern int futimens (int __fd, const struct timespec __times[2]) __THROW;
+            ^
+make[3]: *** [utimecmp.o] Error 1
+make[3]: Leaving directory `/w/home.06/cs/ugrad/mirabzad/lab4/coreutils-with-bug/lib'
+make[2]: *** [all] Error 2
+make[2]: Leaving directory `/w/home.06/cs/ugrad/mirabzad/lab4/coreutils-with-bug/lib'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/w/home.06/cs/ugrad/mirabzad/lab4/coreutils-with-bug'
+make: *** [all] Error 2
+
+6. To fix this, I downloaded the remaining patch by the following command:
+	wget https://web.cs.ucla.edu/classes/winter19/cs35L/assign/coreutils.diff
+
+7. I used the following command to patch
+	patch -p0 < coreutils.diff
+
+	Result:
+		patching file lib/utimens.c
+		patching file lib/utimens.h
+		patching file src/copy.c
+		patching file src/tee.c
+		patching file src/touch.c
+
+8. Then make and make install to install the coreutils patch
+	make
+	make install
+
+9. As explained in the lab manual; created a temporary directory then go the file and create three files
+	$ tmp=$(mktemp -d)
+	$ cd $tmp
+	$ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+	$ touch now
+	$ sleep 1
+	$ touch now1
+
+10. Then run the following command for the broken ls -t:
+	TZ=UTC0 ls -lt --full-time wwi-armistice now now1
+	
+	We get the following:
+	-rw-r--r-- 1 mirabzad csugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+	-rw-r--r-- 1 mirabzad csugrad 0 2019-02-05 08:47:23.562578615 +0000 now1
+	-rw-r--r-- 1 mirabzad csugrad 0 2019-02-05 08:46:34.201725848 +0000 now
+Ls -t would list in the order based on the time created but this is not what we get from  ls -t
+
+11. Try to debug and see what is the problem
+	gdb ~/lab4/coreutils-with-bug/src/ls
+12. Now we are in debugger we run the following command
+	info function
+	to get list of all the functions
+13. When look at list of the functions, name of one function seems more interesting than the others as it sounds like what we are trying to debug
+	:static int compare_mtime(V, V);
+14. Therefore, I created a breakpoint there to see what happens:
+	break compare_mtime
+then list to see the function:
+	run -lt
+	stepi
+	list
+We get the following:
+
+  Assume the nanosecond components are in range, or close to it.  */
+45	static inline int
+46	timespec_cmp (struct timespec a, struct timespec b)
+47	{
+48	  int diff = a.tv_sec - b.tv_sec;
+49	  return diff ? diff : a.tv_nsec - b.tv_nsec;
+50	}
+
+By looking at the function we realize that the problem could be due to the fact diff is an integer and can get overflowed. So I get a copy of this function and and create a new one.
+If diff is negative, return -1. if they are equal, return 0.and if it is positive, return 1.
+Copy timespec.h and open it with emacs
+cp lib/timespec.h timespec.h
+emacs timespec.h
+
+
+Now, we have to generate the patch file and we can do this using the diff -u
+command and redirect the output to lab4.diff. Then, we use emacs edit the
+file into the form of a ChangeLog entry. Using C-x 4-a, we can add a
+ChangeLog entry and copy and paste that into out diff file. We also append
+'lib/' to start of the line where we add the timespec.h to ensure that
+timespec.h gets edited.
+Commands: diff -u lib/timespec.h timespec.h > lab4.diff
+	  emacs lab4.diff
+
+Now, I use emacs to generate the ChangeLog Entry as instructed by the spec.
+I emacs timespec.h from the coreutils-with-bug directory and use the
+`C-x 4 a` command to create a ChangeLog that looked like the following:
+
+	 2019-02-05  Ali Mirabzadeh  <mirabzad@lnxsrv09.seas.ucla.edu>
+Then C-x C-s to to create file ChangeLog in coreutils-with-bug
+with the above entry
+
+
+Lastly, we reproduce the problem in our home directory on the SEASnet Linux
+servers. We create a temporary directory called "tmp" and use the same
+commands as in the example given.
+Commands: mkdir tmp
+	  cd tmp
+	  touch -d '1918-11-11 11:00 GMT' wwi-armistice
+	  touch now
+	  sleep 1
+	  touch now1
+	  ls -lt --full-time wwi-armistice now now1
+
+So now we get
+-rw-r--r-- 1 mirabzad csugrad 0 Dec 17  2054 wwi-armistice
+-rw-r--r-- 1 mirabzad csugrad 0 Feb  5 21:18 now1
+-rw-r--r-- 1 mirabzad csugrad 0 Feb  5 21:18 now
+
+The timestamp for the 'wwi-armistice' is 2054. This is because of different
+filesystems. The Local File System on Linux server has signed 32-bit time
+stamps. Since Unix Epoch time starts in the year 1970, any time before that
+is negative, such as 1918. However, the SEASnet NFS filesystem has unsigned
+32-bit timestamps and does not consider negative times. Thus, the computer
+returns a time in the future instead.
