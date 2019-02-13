@@ -1,6 +1,6 @@
 This class was inteded to work with tools and software for upper-div classes at UCLA
 
-A few topics to mention thar were lectured in this lab were: C and Python Scripting, Linux, Git, Emacs, Debugging with Terminal, etc.
+A few topics to mention that were lectured in this lab were: Shell and Python Scripting, Linux, Git, Emacs, Debugging with Terminal, C programming language, etc.
 
 Here is the name of each assignment for each week in the order.
 
