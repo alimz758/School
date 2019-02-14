@@ -128,7 +128,7 @@ void removeBad(list<Movie*>& li)
         Movie* mp = *it;
         if ( mp->rating() < 50)
         {
-            mp->~Movie();
+            delete mp;
             it=li.erase(it);
 
         }
@@ -222,7 +222,7 @@ void removeBad(vector<Movie*>& v)
         Movie * mp= *it;
         if ( mp->rating() < 50)
         {
-            mp->~Movie();
+            delete mp;
             it=v.erase(it);
         }
         else
