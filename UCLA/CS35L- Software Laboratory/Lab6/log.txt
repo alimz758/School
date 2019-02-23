@@ -1,0 +1,47 @@
+Ali Mirabzadeh
+305179067
+Lab6
+
+
+
+In the beginning, I got the coreutils 8.6 using the following command.
+
+wget https://ftp.gnu.org/gnu/coreutils/coreutils-8.6.tar.gz
+
+Then run  sort --version to make sure, I have access to latest version, which is 8.22man od
+
+After that, I generated a file containing 2²⁴ random single-precision floating point numbers, in textual form, one per line with no white space. 
+
+So I used 'od' command to dump fils in octal and other formats along with that I used -tf to select floating points, then use -N for number of bytes with 4194304 since each floating point is 4 bytes. Then I used sed and tr to remove white spaces and output in a new line.
+Do all in a text file calling large
+
+od -tf -N 4194304 < /dev/urandom | sed 's/ //g' | tr -s ' ' '\n' > large.txt  
+
+Then as specified in the lab manual, I used time and sort on the data just created. I called the file large
+
+time -p sort -g large.txt > /dev/null
+real 2.62
+user 8.51
+sys 0.05
+
+time -p sort -g --parallel=1 large.txt > /dev/null
+real 8.36
+user 8.32
+sys 0.03
+
+time -p sort -g --parallel=2 large.txt > /dev/null
+real 4.44
+user 8.42
+sys 0.04
+
+time -p sort -g --parallel=4 large.txt > /dev/null
+real 2.56
+user 8.43
+sys 0.05
+
+time -p sort -g --parallel=8 large.txt > /dev/null
+real 2.56
+user 8.46
+sys 0.05
+
+By comparing the results from different sorting, we see that regular sort and sort with parallel=8 are pretty similar; however, others have relatively slower, user, real time multithreading. We also see by increasing the the threads, system call takes more time. We can almost conclude that the default sort as far as coreutils 8.6 and higher is concerned is multithreaded to the maximum number of processors available but capped at 8. That is why the general sort and the 8-threaded sort have similar run times.
