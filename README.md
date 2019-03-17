@@ -7,7 +7,7 @@ Clases:
 Cosumnes River College:
 
       1. Introduction to Computer Programming
-      2.OOP Programming
+      2. OOP Programming
       
       
 UCLA:
