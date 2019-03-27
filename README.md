@@ -12,5 +12,5 @@ Cosumnes River College:
       
 UCLA:
 
-      1. CS-32:  Data Structure and Algorithms
+      1. CS-32:  Data Structures and Algorithms
       2. CS-35L: Software Labratory; Linux, Emacs, Shell/Python Scripting, Dynamic Linking, C Programming, etc.
