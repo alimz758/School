@@ -19,7 +19,7 @@ UCLA:
       5. CS-188: Human-Computer-Interaction(HCI)
       6. CS-111: Operating System, C
       7. CS-161: AI, LISP
-      8. CS-188: [Scalable Internet Services] (https://github.com/scalableinternetservices/deazy)
-   [I'm an inline-style link](https://www.google.com)
+      8. CS-188: Scalable Internet Services - Has its own Repo: deazy
+ 
       
       
