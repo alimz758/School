@@ -1,0 +1,45 @@
+Q1: 
+    (PAD 0) returns 1
+    (PAD 1) returns 1
+    (PAD 2) returns 1
+    (PAD 3) returns 2
+    (PAD 4) returns 2
+    (PAD 5) returns 3
+    (PAD 6) returns 4
+    (PAD 7) returns 5
+    (PAD 8) returns 7
+    (PAD 9) returns 9
+    (PAD 10) returns 12
+    (PAD 25) returns 816
+    (PAD 50) returns 922111
+
+    I noticed that as N grows, it would take longer for the program to execute. The reason for that is obvious, as recursion is the reason. THe bigger the N is the  longer
+    it  would take to calculate PAD.
+
+Q2:
+    (SUMS 0) returns 0
+    (SUMS 1) returns 0
+    (SUMS 2) returns 0
+    (SUMS 3) returns 1
+    (SUMS 4) returns 1
+    (SUMS 5) returns 2
+    (SUMS 6) returns 3
+    (SUMS 7) returns 4
+    (SUMS 8) returns 6
+    (SUMS 9) returns 8
+    (SUMS 10) returns 11  
+
+    I noticed that each SUMS result is its corresponding PAD result minus one; (SUMS N) = (PAD N) - 1))
+    As SUMS returns 0 rather PAD returns 1 in its base case. For two PAD Summision there is one addition being calculated therefore, SUMS is one less than PAD.
+
+Q3.
+    I tested all the mentioned cases and I got the expexted outputs
+	(ANON '42) returns ?
+        (ANON 'FOO) returns ?
+        (ANON '(((L E) F) T)) returns (((? ?) ?) ?)
+        (ANON '(5 FOO 3.1 -0.2)) returns (? ? ? ?)
+        (ANON '(1 (FOO 3.1) -0.2)) returns (? (? ?) ?)
+        (ANON '(((1 2) (FOO 3.1)) (BAR -0.2))) returns (((? ?) (? ?)) (? ?))
+        (ANON '(R (I (G (H T))))) returns (? (? (? (? ?))))
+    I also checked for the base case with empty list as well:
+         (ANON '()) returns NIL

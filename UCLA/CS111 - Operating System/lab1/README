@@ -1,0 +1,28 @@
+Name: Ali Mirabzadeh
+email: thealimz758@ucla.edu
+ID:305179067
+
+Files included are lab1a.c, Makefile, and this README file that containes the inforamtion of each file and their funcationalities.
+
+
+To summarize the .c file:
+Implementation for --rdonly, --wronly, --verbose, and --command.
+Returns 0 if all options work, 1 if one fails.
+If one option fails, will skip and continue with other options.
+If verbose is called twice, it will print out "--verbose" for the second one.
+If verbose flag it set and missing a rd-/wr-only file, then it will print
+the error first before the option name
+I included the rest of the flags for this part, inclduing profile even though wasn't part of this, I did it because of the midterm for the next week.
+
+Makefile would create the executable, it will create tar file, and it will clean all the extra files
+
+
+For lab1c, --profile is added, there is a pdf file as well.
+I've inlcuded three scripts, dashTest.dash, bashTest.bash, simpshTest.sh for lab1c to check the result for three version
+
+For more details check the report
+
+Due to having the midterm at the same I could not spend much time finding issues regarding my code and scripts
+
+Used the followings for the refrence for dash scripting, and help of friends
+https://www.wisdomjobs.com/e-university/shell-scripting-tutorial-174/scripting-in-dash-3340.html

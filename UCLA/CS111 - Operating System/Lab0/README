@@ -1,0 +1,40 @@
+NAME: Ali Mirabzadeh
+EMAIL: thealimz758@ucla.edu
+ID: 305179067
+
+
+I wrote lab0.c, Makefile; took two screenshots of a gdb session with --segfault. and the README file which contains the information.
+lab0.c:
+The C source file used to create the executable. 
+This program copies the standard input to its standard output by reading from file descriptor 0 (stdin) and writing it to file descriptor 1 (stdout).
+This program includes two required options, --input, --output, and two optional options --segfault and --catch.
+These options were created using the getopt_long API.
+When the program succeeds, it does what it intends to do, as the program reads, byte by byte, from the standard input and copies over the results to the standard output.
+When the --segfault option is specified, it creates a segmentation fault through dereferencing a null pointer. This is not the only way to create segmentation faults. 
+When the --segfault option along with the --catch option is specified it uses the signal(2) API to catch the SIGSEGV signal and output the error message. 
+When a bad argument, an option that is not --input, --output, --segfault, or --catch, is specified, we print a usage message to let the user know that the argument is invalid
+
+Makefile
+The default target is used to compile the program using gcc -g and maximized compile-time error checking with -Wall and -Wextra options as requested in the manual
+The check to run a few smoke-tests to see whether my code pass the cases or not
+The clean target removes all unnecessary files that were created in the program.
+The dist that creates the needed file for submission.
+Smoke-test cases
+successTest: This test checks whether the program exit with code 0 with no error
+diffTest: That check whether the input matches the output when provide inout and output
+exitCode1Test: Checks for exit(1) wether there is an unrecognized argument or not
+exitCode2Test: checks for exit(2) whether there is a random, un-openable input
+exitCode3Test Checks for exit(3) whether it could open the output file or not
+exitCode4Test checks for exit(4) whether it caught and received SIGSEGV
+exitCode139Test: Checks for exit(139) whether dump-core option came up or not
+
+backtrace.png: I took a screenshot of a gdb session that shows a segmentation fault using the r --segfault command which shows the line number that it happened, #28, which got used for the 2nd screenshot.
+
+breakpoint.png: I took another screenshot of the gdb session, this time with the break-point at line #28. Then did a p segPointer to see whether actually it is pointing to null which indeed is.
+
+README: Information about the work that I did.
+
+Reference:
+http://web.cs.ucla.edu/classes/fall19/cs111/labs/fd_juggling.html
+https://www.tldp.org/LDP/abs/html/fto.html for bash/files
+https://stackoverflow.com/questions/10121182/multiline-bash-commands-in-makefile
