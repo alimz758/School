@@ -17,5 +17,8 @@ UCLA:
       3. CS-35L: Software Labratory; Linux, Emacs, Shell/Python Scripting, Dynamic Linking, C Programming, GDB, etc.
       4. CS-180: Introduction to Algorithm and Complexity
       5. CS-188: Human-Computer-Interaction(HCI)
+      6. CS-111: Operating System, C
+      7. CS-161: AI
+      8. CS-188: Scalable Internet Services - This has its own [repository](https://github.com/scalableinternetservices/deazy) 
       
       
