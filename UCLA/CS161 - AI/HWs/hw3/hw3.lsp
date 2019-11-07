@@ -1,9 +1,8 @@
-;
 ; CS161 Hw3: Sokoban
-; 
+;
 ; *********************
 ;    READ THIS FIRST
-; ********************* 
+; *********************
 ;
 ; All functions that you need to modify are marked with 'EXERCISE' in their header comments.
 ; Do not modify a-star.lsp.
@@ -14,19 +13,19 @@
 ; Do not make them return anything too large.
 ;
 ; For Allegro Common Lisp users: The free version of Allegro puts a limit on memory.
-; So, it may crash on some hard sokoban problems and there is no easy fix (unless you buy 
-; Allegro). 
+; So, it may crash on some hard sokoban problems and there is no easy fix (unless you buy
+; Allegro).
 ; Of course, other versions of Lisp may also crash if the problem is too hard, but the amount
 ; of memory available will be relatively more relaxed.
 ; Improving the quality of the heuristic will mitigate this problem, as it will allow A* to
 ; solve hard problems with fewer node expansions.
-; 
+;
 ; In either case, this limitation should not significantly affect your grade.
-; 
+;
 ; Remember that most functions are not graded on efficiency (only correctness).
 ; Efficiency can only influence your heuristic performance in the competition (which will
 ; affect your score).
-;  
+;
 ;
 
 
@@ -38,7 +37,7 @@
 
 ;
 ; For reloading modified code.
-; I found this easier than typing (load "filename") every time. 
+; I found this easier than typing (load "filename") every time.
 ;
 (defun reload()
   (load "hw3.lsp")
@@ -62,11 +61,11 @@
 ; A shortcut function.
 ; goal-test and next-states stay the same throughout the assignment.
 ; So, you can just call (sokoban <init-state> #'<heuristic-name>).
-; 
+;
 ;
 (defun sokoban (s h)
   (a* s #'goal-test #'next-states h)
-  )
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; end general utility functions
@@ -130,7 +129,7 @@
 ;
 ; getKeeperPosition (s firstRow)
 ; Returns a list indicating the position of the keeper (c r).
-; 
+;
 ; Assumes that the keeper is in row >= firstRow.
 ; The top row is the zeroth row.
 ; The first (right) column is the zeroth column.
@@ -159,132 +158,95 @@
 	(t (let ((cur (car L))
 		 (res (cleanUpList (cdr L)))
 		 )
-	     (if cur 
+	     (if cur
 		 (cons cur res)
 		  res
 		 )
 	     );end let
 	   );end t
 	);end cond
-  );end 
-
-; EXERCISE: Modify this function to return true (t)
+  );end
+; check if there is a box in the current row
+(defun isBoxInRow (List)
+  (cond ((null List) ())
+	(t (or (isBox (car List)) (isBoxInRow (cdr List))))
+   )
+)
+; EXERCISE : Modify this function to return true (t)
 ; if and only if s is a goal state of a Sokoban game.
 ; (no box is on a non-goal square)
 ;
-; Helper to see if there is any boxes on a row
-(defun isBoxOnRow (List)
-	; check if the list is empty then return empty
-  (cond ((null List) ())
-	(t (or (isBoxOnRow (car List)) (checkRow (cdr List))))
-   )
-)
-; Currently, it always returns NIL. If A* is called with
-; this function as the goal testing function, A* will never
-; terminate until the whole search space is exhausted.
-;
+; Uses recursively goes through each row with isBoxInRow to determine whether or not there a boxes that 
 (defun goal-test (s)
-	;if the final state is null return true
-	(cond ((null s) t)
-		;otherwise check if there are boxes on the row
-		(t (and (not (isBoxOnRow (car s))) (goal-test (cdr s))))
-	)
+  (cond ((null s) t)
+	(t (and (not (isBoxInRow (car s))) (goal-test (cdr s))))
+   )
 );end defun
-
-; EXERCISE: Modify this function to return the list of 
-; sucessor states of s.
-;
-; This is the top-level next-states (successor) function.
-; Some skeleton code is provided below.
-; You may delete them totally, depending on your approach.
-; 
-; If you want to use it, you will need to set 'result' to be 
-; the set of states after moving the keeper in each of the 4 directions.
-; A pseudo-code for this is:
-; 
-; ...
-; (result (list (try-move s UP) (try-move s DOWN) (try-move s LEFT) (try-move s RIGHT)))
-; ...
-; 
-; You will need to define the function try-move and decide how to represent UP,DOWN,LEFT,RIGHT.
-; Any NIL result returned from try-move can be removed by cleanUpList.
-; 
-;
-;;-------------- all helper function for next-state ------
-; Helper function for get-square - rows
-(defun getRow (S r)
-        ; invalid
+; this helper reads row r of state S
+(defun rows (S r)
+        ; Outside of problem scope
   (cond ((< r 0) ())
-        ; if the state is null
+        ; State is null
         ((NULL S) ())
-        ; if the first row
+        ; Dealing with first row
         ((= 0 r) (car S))
-        ; recursivly check rows
-        (T (getRow (cdr S) (- r 1)))
+        ; Recurse through rows
+        (T (rows (cdr S) (- r 1)))
   )
 )
-; helper function for get-square  - col
-(defun getCol (S c)
-        ; if state is wall
-  (cond ((NULL S) 1)
-        ; if col is wall
-	((< c 0) 1)
-        ; check the fist col
-	((= c 0) (car S))
-        ; recursivly check cols
-	(T (getCol (cdr S) (- c 1)))
+; this helper reads column c of state S
+(defun column (S c)
+        ; if the state is wall
+    (cond ((NULL S) 1)
+        ; if the column is wall
+	  ((< c 0) 1)
+        ; if the first col
+	  ((= c 0) (car S))
+        ; recursively go through rows cols
+	  (T (column (cdr S) (- c 1)))
   )
 )
-
 ; gets the element at (r,c)
 (defun get-square (S r c)
-  (let ((element (getRow S r)))
-       (getCol element c)
+  (let ((element (rows S r)))
+       (column element c)
   )
 )
-
-; kakes in a state S, a row number r, a column number c, and a square content v
+; Takes in a state S, a row number r, a column number c, and a square content v
 ; (integer). Return a new state S’ that is obtained by setting the square (r,c)
-; to value v. Does not modify input state.
+; to value v. 
 (defun set-square (S r c v)
-        ; Outside of state
+        ; if outside of the gris 
   (cond ((or (null S) (null (car S))) S)
-        ; Reached correct coordinate
+        ;correct location
         ((and (= r 0) (= c 0)) (cons (cons v (cdr (car S))) (cdr S)))
-        ; Recurse through rows
+        ; recursively go through rows
         ((>= r 1) (cons (car S) (set-square (cdr S) (- r 1) c v)))
-        ; Recurse through columns
+        ; recursively go through columns
         ((>= c 1) (let ((xs (set-square (cons (cdr (car S)) (cdr S))
                   r (- c 1) v))) (cons (cons (car (car S)) (car xs)) (cdr xs))
         ))
   )
 )
-
-; helper function for try-move. Attempts to move keeper. Takes state S, row r,
-; column c, keeper k, element one move away from keeper a, and element two
-; moves away from keeper b. Returns a new state.
-(defun move (S r c k a b)
-        ; Are we one move away from wall?
+; helper function for try-move in attempts to move keeper
+(defun moves (S r c k a b)
+        ; if the next location is wall return empty
   (cond ((isWall a) ())
-        ; Just pushed box; is the next element not goal or blank?
+        ; just pushed box, check if the next square us goal or goal
         ((and (isBox a) (not (or (isStar b) (isBlank b)))) ())
-        ; move keeper
+        ; move the keeper otherwise
         ((= k keeper) (set-square S r c blank))
         ((= k keeperstar) (set-square S r c star))
   )
 )
-
-; A function takes in a state S and a move direction D. This function returns
-; the state that is the result of moving the keeper in state S in direction D.
-; it returns nil if the direction is invalid or can't not be made
+; would make the the keeper to move in a desired direction and then return the new state 
 (defun try-move (S D)
-  ; get keeper position and element at coordinate
+  ; get keepers position
   (let* ((pos (getKeeperPosition S 0)) (c (first pos)) (r (first (rest pos)))
          (k (get-square S r c)))
-
     (cond
-      ; Move up;  adjust 1, 2 step values
-      ((equal D 'UP) (let* ((u1 (get-square S (- r 1) c)) (u2 (get-square S (- r 2) c)) (a (move S r c k u1 u2)))
+      ; move up; 
+      ((equal D 'UP) (let* ((u1 (get-square S (- r 1) c)) (u2 (get-square S (- r 2) c)) (a (moves S r c k u1 u2)))
         (cond ((isBlank u1) (set-square a (- r 1) c keeper))
               ((and (isBox u1) (isBlank u2)) (set-square (set-square a (- r 1) c keeper) (- r 2) c box))
               ((and (isBox u1) (isStar u2)) (set-square (set-square a (- r 1) c keeper) (- r 2) c boxstar))
@@ -293,9 +255,8 @@
               ((and (isBoxStar u1) (isStar u2)) (set-square (set-square a (- r 1) c keeperstar) (- r 2) c boxstar))
         )
       ))
-
-      ; Move down; adjust 1, 2 step values
-      ((equal D 'DOWN) (let* ((d1 (get-square S (+ r 1) c)) (d2 (get-square S (+ r 2) c)) (a (move S r c k d1 d2)))
+      ; move down
+      ((equal D 'DOWN) (let* ((d1 (get-square S (+ r 1) c)) (d2 (get-square S (+ r 2) c)) (a (moves S r c k d1 d2)))
         (cond ((isBlank d1) (set-square a (+ r 1) c keeper))
               ((and (isBox d1) (isBlank d2)) (set-square (set-square a (+ r 1) c keeper) (+ r 2) c box))
               ((and (isBox d1) (isStar d2)) (set-square (set-square a (+ r 1) c keeper) (+ r 2) c boxstar))
@@ -304,9 +265,8 @@
               ((and (isBoxStar d1) (isStar d2)) (set-square (set-square a (+ r 1) c keeperstar) (+ r 2) c boxstar))
         )
       ))
-
-      ; Move left; adjust 1, 2 step values
-      ((equal D 'LEFT) (let* ((l1 (get-square S r (- c 1))) (l2 (get-square S r (- c 2))) (a (move S r c k l1 l2)))
+      ; move left;
+      ((equal D 'LEFT) (let* ((l1 (get-square S r (- c 1))) (l2 (get-square S r (- c 2))) (a (moves S r c k l1 l2)))
         (cond((isBlank l1) (set-square a r (- c 1) keeper))
              ((and (isBox l1) (isBlank l2)) (set-square (set-square a r (- c 1) keeper) r (- c 2) box))
              ((and (isBox l1) (isStar l2)) (set-square (set-square a r (- c 1) keeper) r (- c 2) boxstar))
@@ -315,9 +275,8 @@
              ((and (isBoxStar l1) (isStar l2)) (set-square (set-square a r (- c 1) keeperstar) r (- c 2) boxstar))
         )
       ))
-
-      ; Move right; adjust 1, 2 step values
-      ((equal D 'RIGHT) (let* ((r1 (get-square S r (+ c 1))) (r2 (get-square S r (+ c 2))) (a (move S r c k r1 r2)))
+      ; move right;
+      ((equal D 'RIGHT) (let* ((r1 (get-square S r (+ c 1))) (r2 (get-square S r (+ c 2))) (a (moves S r c k r1 r2)))
         (cond ((isBlank r1) (set-square a r (+ c 1) keeper))
               ((and (isBox r1) (isBlank r2)) (set-square (set-square a r (+ c 1) keeper) r (+ c 2) box))
               ((and (isBox r1) (isStar r2)) (set-square (set-square a r (+ c 1) keeper) r (+ c 2) boxstar))
@@ -330,40 +289,60 @@
   )
 )
 
+; EXERCISE : Modify this function to return the list of 
+; sucessor states of s.
+;
+; This is the top-level next-states (successor) function.
+; Some skeleton code is provided below.
+; You may delete them totally, depending on your approach.
+;
+; If you want to use it, you will need to set 'result' to be
+; the set of states after moving the keeper in each of the 4 directions.
+; A pseudo-code for this is:
+;
+; ...
+; (result (list (try-move s UP) (try-move s DOWN) (try-move s LEFT) (try-move s RIGHT)))
+; ...
+;
+; You will need to define the function try-move and decide how to represent UP,DOWN,LEFT,RIGHT.
+; Any NIL result returned from try-move can be removed by cleanUpList.
+;
+;
 (defun next-states (s)
-	;try to move the four possible direction by using the try-move helper function
   (cleanUpList (list (try-move s 'UP) (try-move s 'DOWN) (try-move s 'LEFT) (try-move s 'RIGHT)))
-);
-
-; EXERCISE: Modify this function to compute the trivial 
+)
+; EXERCISE : Modify this function to compute the trivial
 ; admissible heuristic.
 ;
 (defun h0 (s)
-;(5 pts) Write a heuristic function called h0 that returns the constant 0. This is a trivial admissible
-	0
+  0
 )
-
+; EXERCISE: Modify this function to compute the
+; number of misplaced boxes in s.
+;
+; This heuristic is admissible. For each box not in the goal state, at least
+; one move is required. Hence, in the best case scenario, you will need to
+; make N moves to get to the goal state, where N represents the number of
+; boxes not in the goal state at the beginning of the game. Hence, the cost
+; of reaching the goal is never overestimated.
 (defun h1 (s)
-	; Reached end of s
+          ; Reached end of s
     (cond ((null s) 0)
-          ; check whether found a box
-          ((atom s) (cond ((isBoxOnRow s) 1) 
-		  			(T 0)))
-          ; other recursively search
+          ; Found box?
+          ((atom s) (cond ((isBox s) 1) (T 0)))
+          ; Continue searching
           (T (+ (h1 (car s)) (h1 (cdr s))))
     )
 )
-; EXERCISE: Modify this function to compute the 
-; number of misplaced boxes in s.
-;;------------------- All the helper functions written for h305179067  ------------------------
-; simply calculate the abs value of the number passed to the function
-(defun absVal (n)
+; ----------------------------
+; these are all helpers for h305179067
+; Calculates the absolute value a number that has been passed
+(defun findAbsoluteValue (n)
   (cond ((>= n 0) n)
          (T (- 0 n))
   )
 )
-
-; Find the manhattan dist; it takes lists in the format (r1, c1, r2, 2).
+; Determines the manhattanDist distance
 (defun manhattanDist (l)
   (cond ((and (<= (- (car l) (third l)) 1) (<= (- (second l) (fourth l)) 1)) (+ (* (- (car l) (third l)) -1) (* (- (second l) (fourth l)) -1)))
          ((<= (- (car l) (third l)) 1) (+ (* (- (car l) (third l)) -1) (- (second l) (fourth l))))
@@ -371,12 +350,11 @@
          (T (+ (- (car l) (third l)) (- (second l) (fourth l))))
   )
 )
-
-; find the location of the nearest box
+; returns the location of the nearest box
 (defun nearestBox (S l)
-        ; if there is one box, return its location
+        ; if onnly one box in the state then return the location
   (cond ((equal (length l) 1) (list (manhattanDist (append (car l) (getKeeperPosition S 0))) (car l)))
-        ; if there are two boxes then return the closer one's location
+        ; if two boxes in state return the one that is closer
         ((equal (length l) 2)
           (cond ((<= (manhattanDist (append (car l) (getKeeperPosition S 0)))
                      (manhattanDist (append (second l) (getKeeperPosition S 0)))
@@ -397,47 +375,44 @@
          )
   )
 )
-
-; this function returns the locations of all boxes not yet at the goal;
+; returns the locations the boxes that are not at the goals
 (defun boxesLeft (S r c)
-        ; null state
+        ; if the null state return empty
   (cond ((null S) ())
-        ; if there is one element
-        ((atom S) (cond ((isBoxOnRow S) (list (cons (- c 1) (cons r ()))))
+        ; if there is only an element then return its location
+        ((atom S) (cond ((isBox S) (list (cons (- c 1) (cons r ()))))
                   (T ())))
-        ; Recursively search state for box locations
+        ; other wise recursively call the function
         (T (cond ((= c 0) (append (boxesLeft (car S) r (+ c 1)) (boxesLeft (cdr S) (+ r 1) c)))
                  (T (append (boxesLeft (car S) r c) (boxesLeft (cdr S) r (+ c 1)))))
         )
   )
 )
-
-; Returns the locations of all goals not yet filled;.
-(defun leftGoalsLocation (S r c)
+; this function returns the locations of all goals that have not been filled
+(defun goalsLeft (S r c)
         ; Null state
   (cond ((null S) ())
         ((atom S) (cond ((isStar S) (list (cons (- c 1) (cons r ()))))
                   (T ())))
         ; Recursively search state for box locations
-        (T (cond ((= c 0) (append (leftGoalsLocation (car S) r (+ c 1)) (leftGoalsLocation (cdr S) (+ r 1) c)))
-                  (T (append (leftGoalsLocation (car S) r c) (leftGoalsLocation (cdr S) r (+ c 1)))))
+        (T (cond ((= c 0) (append (goalsLeft (car S) r (+ c 1)) (goalsLeft (cdr S) (+ r 1) c)))
+                  (T (append (goalsLeft (car S) r c) (goalsLeft (cdr S) r (+ c 1)))))
         )
   )
 )
 
-; to find the shortes path bw two points
-(defun shortestPath (a b)
-  (+ (absVal (- (car b) (car a))) (absVal (- (second b) (second a))))
+; helper function for shortestPath. 
+(defun findShortest (a b)
+  (+ (findAbsoluteValue (- (car b) (car a))) (findAbsoluteValue (- (second b) (second a))))
 )
-
-; Shortest distance between any two points a and b
+; find the shortest path btween two pints on the grid
 (defun shortestPath (a b curr)
-  ; Endpoint is current point
+  ; if the end point is the curr point
   (cond ((null b) curr)
-        (T (let ((path (shortestPath a (car b))))
-                 ; Recursively search for shortest distance
+        (T (let ((path (findShortest a (car b))))
+                 ; recursively search for shortest distance
                  (cond ((null curr) (shortestPath a (cdr b) path))
-                   ; Did we find a shorter distance?
+                   ; check if found the shortest path
                    (t (cond ((>= path curr) (shortestPath a (cdr b) curr))
                             (t (shortestPath a (cdr b) path))))
                  )
@@ -445,38 +420,25 @@
         )
   )
 )
-
-; sums the distances of each box to their nearest goal
-(defun pathSum (box goal)
-        ; No boxes
+; this function would find the sum of distnances of each box to their nearset goal
+(defun sumOfDistances (box goal)
+        ; if no box, return 0
   (cond ((null goal) 0)
-        ; Recursively sum path
-        (T (+ (shortestPath (car box) goal ()) (pathSum (cdr box) (cdr goal))))
+        ; recursively call the function
+        (T (+ (shortestPath (car box) goal ()) (sumOfDistances (cdr box) (cdr goal))))
   )
 )
 
-; EXERCISE: Change the name of this function to h<UID> where
-; <UID> is your actual student ID number. Then, modify this 
-; function to compute an admissible heuristic value of s. 
-; 
-; This function will be entered in the competition.
-; Objective: make A* solve problems as fast as possible.
-; The Lisp 'time' function can be used to measure the 
-; running time of a function call.
-;
 ; Admissible heuristic with my UID
 (defun h305179067 (s)
-        ; null state
+        ; if it is Null state
   (cond ((null s) 0)
-        ; check whether  there any boxes left
+        ; Are there any boxes remaining? If not, game over
         ((equal (length (boxesLeft s 0 0)) 0) 0)
         ; Sum distances
-        (T (+ (car (nearestBox s (boxesLeft s 0 0))) (pathSum (boxesLeft s 0 0) (leftGoalsLocation s 0 0))))
+        (T (+ (car (nearestBox s (boxesLeft s 0 0))) (sumOfDistances (boxesLeft s 0 0) (goalsLeft s 0 0))))
   )
 )
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -487,16 +449,16 @@
  | For most problems, we also privide 2 additional number per problem:
  |    1) # of nodes expanded by A* using our next-states and h0 heuristic.
  |    2) the depth of the optimal solution.
- | These numbers are located at the comments of the problems. For example, the first problem below 
+ | These numbers are located at the comments of the problems. For example, the first problem below
  | was solved by 80 nodes expansion of A* and its optimal solution depth is 7.
- | 
+ |
  | Your implementation may not result in the same number of nodes expanded, but it should probably
- | give something in the same ballpark. As for the solution depth, any admissible heuristic must 
+ | give something in the same ballpark. As for the solution depth, any admissible heuristic must
  | make A* return an optimal solution. So, the depths of the optimal solutions provided could be used
  | for checking whether your heuristic is admissible.
  |
  | Warning: some problems toward the end are quite hard and could be impossible to solve without a good heuristic!
- | 
+ |
  |#
 
 ;(80,7)
@@ -510,9 +472,9 @@
 
 ;(110,10)
 (setq p2 '((1 1 1 1 1 1 1)
-	   (1 0 0 0 0 0 1) 
-	   (1 0 0 0 0 0 1) 
-	   (1 0 0 2 1 4 1) 
+	   (1 0 0 0 0 0 1)
+	   (1 0 0 0 0 0 1)
+	   (1 0 0 2 1 4 1)
 	   (1 3 0 0 1 0 1)
 	   (1 1 1 1 1 1 1)))
 
@@ -567,11 +529,11 @@
 	   (1 1 1 1 1 1)))
 
 ;(1806,41)
-(setq p9 '((1 1 1 1 1 1 1 1 1) 
-	   (1 1 1 0 0 1 1 1 1) 
-	   (1 0 0 0 0 0 2 0 1) 
-	   (1 0 1 0 0 1 2 0 1) 
-	   (1 0 4 0 4 1 3 0 1) 
+(setq p9 '((1 1 1 1 1 1 1 1 1)
+	   (1 1 1 0 0 1 1 1 1)
+	   (1 0 0 0 0 0 2 0 1)
+	   (1 0 1 0 0 1 2 0 1)
+	   (1 0 4 0 4 1 3 0 1)
 	   (1 1 1 1 1 1 1 1 1)))
 
 ;(10082,51)
@@ -616,7 +578,7 @@
 ;(41715,53)
 (setq p14 '((0 0 1 0 0 0 0)
 	    (0 2 1 4 0 0 0)
-	    (0 2 0 4 0 0 0)	   
+	    (0 2 0 4 0 0 0)
 	    (3 2 1 1 1 0 0)
 	    (0 0 1 4 0 0 0)))
 
@@ -661,7 +623,7 @@
 	    (0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0)
 	    (0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0)
 	    (0 0 0 0 1 0 0 0 0 0 4 1 0 0 0 0)
-	    (0 0 0 0 1 0 2 0 0 0 0 1 0 0 0 0)	    
+	    (0 0 0 0 1 0 2 0 0 0 0 1 0 0 0 0)
 	    (0 0 0 0 1 0 2 0 0 0 4 1 0 0 0 0)
 	    ))
 ;(??,21)
@@ -771,7 +733,7 @@
 ;
 (defun printRow (r)
   (dolist (cur r)
-    (printSquare cur)    
+    (printSquare cur)
     )
   );
 
@@ -779,7 +741,7 @@
 ; Print a state
 ;
 (defun printState (s)
-  (progn    
+  (progn
     (dolist (cur s)
       (printRow cur)
       (format t "~%")

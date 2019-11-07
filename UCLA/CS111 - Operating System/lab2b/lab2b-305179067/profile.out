@@ -1,0 +1,8 @@
+Total: 827 samples
+     668  80.8%  80.8%      827 100.0% threadFunction
+     121  14.6%  95.4%      121  14.6% __strcmp_sse42
+      19   2.3%  97.7%       83  10.0% SortedList_insert
+      18   2.2%  99.9%       75   9.1% SortedList_lookup
+       1   0.1% 100.0%        1   0.1% SortedList_length
+       0   0.0% 100.0%      827 100.0% __clone
+       0   0.0% 100.0%      827 100.0% start_thread

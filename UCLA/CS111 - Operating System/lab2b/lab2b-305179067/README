@@ -1,0 +1,55 @@
+NAME: Ali Mirabzadeh
+EMAIL: thealimz758@g.ucla.edu
+ID: 305179067
+used: 
+https://stackoverflow.com/questions/26636570/using-pprof-with-gperftools-resulting-in-curl-error
+
+In this part, we the lists partitioned into multiple lists, passed in by user, to reduce contention for the resource between threads.
+I have included all the needed files and they are in the tar ball.
+
+The profile.out file that I have got doesn't make much sense to me so I am not sure about 2.3.2, 
+
+QUESTION 2.3.1 - CPU time in the basic list implementation:
+Where do you believe most of the CPU time is spent in the 1 and 2-thread list tests ?
+Why do you believe these to be the most expensive parts of the code?
+Where do you believe most of the CPU time is being spent in the high-thread spin-lock tests?
+Where do you believe most of the CPU time is being spent in the high-thread mutex tests?
+
+ANS:
+1. For add, I think, the lock is probably the same, since the operation is the same for all. In the list the list options would take up most of the time.
+2. I think there is no other potential source of overhead in other parts due to having 1-2 thread. hence, the operations would take up most of the CPU's time
+3. I think in both add and lisr the time got spent in the spin locks
+4. I think for add is in context switching. For list, it depends on the number of the threads:
+Could be low if there is a lot of threads, but otherwise it could be dependent of the conxtex switiching, I believe. 
+
+
+
+QUESTION 2.3.2 - Execution Profiling:
+Where (what lines of code) are consuming most of the CPU time when the spin-lock version of the list exerciser is run with a large number of threads?
+Why does this operation become so expensive with large numbers of threads?
+
+ANS:
+1. Based on profile.out that I have got I can't speak with confident for this Q 
+2. As for the previous one, not sure about this as well.
+
+QUESTION 2.3.3 - Mutex Wait Time:
+Look at the average time per operation (vs. # threads) and the average wait-for-mutex time (vs. #threads).
+Why does the average lock-wait time rise so dramatically with the number of contending threads?
+Why does the completion time per operation rise (less dramatically) with the number of contending threads?
+How is it possible for the wait time per operation to go up faster (or higher) than the completion time per operation?
+
+ANS:
+1. The more threads wanting a lock then overall waiting would increase.
+2. I think it is because of average lock-wait time is based on the wait time for the lock over the time necessary to get to that point.
+3. I think, since there can be overlap in waiting between threads this would cause the faster increase
+
+QUESTION 2.3.4 - Performance of Partitioned Lists
+Explain the change in performance of the synchronized methods as a function of the number of lists.
+Should the throughput continue increasing as the number of lists is further increased? If not, explain why not.
+It seems reasonable to suggest the throughput of an N-way partitioned list should be equivalent to the throughput of a single list with fewer (1/N) threads. Does this appear to be true in the above curves? If not, explain why not.
+
+
+ANS:
+1. Higher number of lists means a shorter overall list length for each thread; a lower chance of lock contention
+2. I think no as we are only limited by number of threads. There could be a case that the overall size, number of lists, and threads that we can create a throughput with contention for lock with probability 0.
+3. I don't think so, because if we have a smaller list then there would be fewer critical sections; hence, contention would be less likely, or less possible
