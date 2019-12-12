@@ -1,0 +1,7 @@
+NAME: Ali Mirabzadeh
+EMAIL: thealimz758@g.ucla.edu
+ID: 305179067
+
+I have included all the needed files, lab4b.c, Makefile, and README
+Mainly in lab4b.c after handling the options passed to the executable, I initialize the button and temp to read date and Iprint the desired temp with the time then real line to process START, STOP, SCALE, PERIOD and log accordingly.
+My main struggle was interacting with BB, and using poll() and AIO,GPIO

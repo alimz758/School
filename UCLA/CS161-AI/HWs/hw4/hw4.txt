@@ -1,0 +1,18 @@
+Ali Mirabzadeh
+305179067
+HW4
+
+
+The graph1.txt is not satisfiable using 3 color; however, 4 colors would be satisfiable and that is due to the highest degree
+node, 4. Using the 4 colors:
+red, green, blue, and yellow:
+
+   Node 1: Red
+   Node 2: Green
+   Node 3: Red
+   Node 4: Blue
+   Node 5: Yellow
+   Node 6: Green
+   Node 7: Blue
+
+The second graph is only satisfiable using 8 or more 

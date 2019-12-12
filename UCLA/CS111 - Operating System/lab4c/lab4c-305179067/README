@@ -1,0 +1,18 @@
+NAME: Ali mirabzadeh
+EMAIL: thealimz758@g.ucla.edu
+ID: 305179067
+
+Used the following:
+https://pubs.opengroup.org/onlinepubs/7990989775/xns/netinetin.h.html
+https://pubs.opengroup.org/onlinepubs/7908799/xns/socket.html
+https://pubs.opengroup.org/onlinepubs/7908799/xns/gethostbyname.html
+
+For this lab my main struggle was making the TCP to work, tls was rather easier since it;s built on top of tcp.
+I have added the Makefile, READEME and lab4c_tls.c and lab4c_tcp.c
+The two .c codes are based off the lab4b with the newly added functionality
+It passes the script, I tested on my BBG.
+
+
+NOTE: I wrote my code on Visual Studio Code then copy/pasted on Vi on my BBG. Then made the DIST on BBG, then SCPied to my computer to upload on CCLE. 
+The copy/pasting made the format of the lab4c_tls.c and lab4c_tcp.c a little bit messed up.
+

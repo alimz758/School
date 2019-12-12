@@ -1,0 +1,10 @@
+#!/bin/bash 
+if [ $# -eq 1 ]
+then
+    python lab3b.py $1    
+    exit $?
+
+else
+echo "Invalid arg"
+    exit 1
+fi

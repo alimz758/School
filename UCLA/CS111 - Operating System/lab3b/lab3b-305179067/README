@@ -1,0 +1,9 @@
+#NAME: Ali Mirabzadeh
+#EMAIL: thealimz758@g.ucla.edu
+#ID: 305179067
+
+I have included all the files, lab3.py, Makefile, and README
+
+I wrote the source file in Python as it is much  easier to implement.
+I basically read the CSV, line by line and store columns in an array, rowArray, then check for any incosistancy according to the 
+CSV file and the assignment.
